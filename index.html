@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemEdu Admin & O'quv Portali</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1329;
+            color: #f8fafc;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #0d9488;
+            border-radius: 4px;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .admin-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(20, 184, 166, 0.25);
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(13, 148, 136, 0.35);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-white">
+
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/30">
+                        <i class="fa-solid font-bold text-2xl text-slate-950 fa-flask"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-extrabold bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">ChemEdu</span>
+                        <span id="role-subtitle" class="block text-xs text-teal-400/90 font-medium tracking-wider">O'QUV PORTALI</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2" id="main-nav-links">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-teal-400 bg-teal-500/10 border border-teal-500/20">
+                        <i class="fa-solid fa-chart-pie mr-2"></i>Bosh sahifa
+                    </button>
+                    <button onclick="switchTab('videos')" id="nav-videos" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+                        <i class="fa-solid fa-circle-play mr-2"></i>Video Darslar
+                    </button>
+                    <button onclick="switchTab('quizzes')" id="nav-quizzes" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+                        <i class="fa-solid fa-vial mr-2"></i>Testlar
+                    </button>
+                    <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+                        <i class="fa-solid fa-trophy mr-2"></i>Reyting
+                    </button>
+                    <button onclick="switchTab('announcements')" id="nav-announcements" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+                        <i class="fa-solid fa-bullhorn mr-2"></i>E'lonlar
+                    </button>
+                </nav>
+
+                <!-- Admin / Student Mode Toggle Switch -->
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center bg-slate-900 border border-slate-700/80 rounded-full p-1 shadow-inner">
+                        <button id="mode-student-btn" onclick="setMode('student')" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-teal-500 text-slate-950 shadow-md">
+                            <i class="fa-solid fa-user-graduate mr-1"></i> O'quvchi
+                        </button>
+                        <button id="mode-admin-btn" onclick="setMode('admin')" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-user-gear mr-1"></i> Admin Panel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Bar -->
+        <div class="md:hidden flex justify-around bg-slate-950 border-t border-slate-800 py-2.5 px-2">
+            <button onclick="switchTab('dashboard')" class="mobile-nav-btn text-teal-400 p-1 text-center text-[11px]">
+                <i class="fa-solid fa-chart-pie text-base block"></i>Bosh sahifa
+            </button>
+            <button onclick="switchTab('videos')" class="mobile-nav-btn text-slate-400 p-1 text-center text-[11px]">
+                <i class="fa-solid fa-circle-play text-base block"></i>Darslar
+            </button>
+            <button onclick="switchTab('quizzes')" class="mobile-nav-btn text-slate-400 p-1 text-center text-[11px]">
+                <i class="fa-solid fa-vial text-base block"></i>Testlar
+            </button>
+            <button onclick="switchTab('leaderboard')" class="mobile-nav-btn text-slate-400 p-1 text-center text-[11px]">
+                <i class="fa-solid fa-trophy text-base block"></i>Reyting
+            </button>
+            <button onclick="switchTab('admin-panel')" id="mobile-admin-tab" class="mobile-nav-btn text-slate-400 p-1 text-center text-[11px]">
+                <i class="fa-solid fa-sliders text-base block"></i>Admin
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <section id="view-dashboard" class="space-y-8">
+            <!-- Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-950 via-slate-900 to-slate-950 border border-teal-500/30 p-8 md:p-12 shadow-2xl">
+                <div class="absolute -right-12 -bottom-12 opacity-15 pointer-events-none">
+                    <i class="fa-solid fa-atom text-[320px] text-teal-400"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-300 border border-teal-500/20">
+                        <i class="fa-solid fa-crown text-amber-400"></i> Interaktiv Boshqariladigan Platforma
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight">
+                        Kimyo O'quv Portali va Boshqaruv Markazi
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Sayt admin paneli orqali yangi testlar, video darslar hamda e'lonlarni qo'shishingiz mumkin. Kiritilgan barcha o'zgarishlar avtomatik saqlanib boradi!
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <button onclick="switchTab('quizzes')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 font-bold text-slate-950 shadow-lg shadow-teal-500/25 hover:opacity-90 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Test topshirish
+                        </button>
+                        <button onclick="setMode('admin')" class="px-6 py-3 rounded-xl bg-slate-800/90 border border-teal-500/40 font-semibold text-teal-300 hover:bg-slate-700 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-sliders"></i> Admin Panelga o'tish
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 text-xl">
+                        <i class="fa-solid fa-vial"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-white" id="stat-total-quizzes">0</div>
+                        <div class="text-xs text-slate-400">Mavjud Testlar Savoli</div>
+                    </div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
+                        <i class="fa-solid fa-video"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-white" id="stat-total-videos">0</div>
+                        <div class="text-xs text-slate-400">Video Darslar</div>
+                    </div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-white" id="stat-total-students">0</div>
+                        <div class="text-xs text-slate-400">Ro'yxatdagi O'quvchilar</div>
+                    </div>
+                </div>
+                <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-xl">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-white" id="stat-total-announcements">0</div>
+                        <div class="text-xs text-slate-400">Faol E'lonlar</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Announcements Display -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bullhorn text-teal-400"></i> So'nggi Yangiliklar va E'lonlar
+                    </h2>
+                    <button onclick="switchTab('announcements')" class="text-xs font-semibold text-teal-400 hover:underline">Barchasini ko'rish &rarr;</button>
+                </div>
+                <div id="dashboard-announcements" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Announcements rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="view-videos" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white">Video Darslar Platformasi</h2>
+                    <p class="text-slate-400 text-sm">YouTube integratsiyasi bilan mavzulashtirilgan video ma'ruzalar</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main YouTube Player Embed -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
+                        <iframe id="main-youtube-iframe" class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video dars" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl space-y-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-300 border border-teal-500/20" id="active-video-topic">Mavzu</span>
+                        <h3 class="text-xl font-bold text-white" id="active-video-title">Video dars sarlavhasi</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed" id="active-video-desc">Dars tavsifi...</p>
+                    </div>
+                </div>
+
+                <!-- Video Playlist -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-white flex items-center justify-between">
+                        <span>Darslar Ro'yxati</span>
+                        <span class="text-xs font-normal text-slate-400" id="video-count-badge">0 ta dars</span>
+                    </h3>
+                    <div class="space-y-2.5 max-h-[500px] overflow-y-auto custom-scrollbar pr-1" id="videos-list-container">
+                        <!-- Dynamic list -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-quizzes" class="hidden space-y-6">
+            <div id="quiz-selection-screen" class="space-y-6">
+                <div class="text-center max-w-2xl mx-auto space-y-2">
+                    <h2 class="text-3xl font-extrabold text-white">Kimyo Test Markazi</h2>
+                    <p class="text-slate-400 text-sm">O'zingiz mos keluvchi mavzulardagi testlarni yechib, bilimingizni va reytingingizni oshiring</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="quizzes-grid-container">
+                    <!-- Dynamic quiz categories -->
+                </div>
+            </div>
+
+            <!-- Active Quiz Player -->
+            <div id="quiz-active-screen" class="hidden max-w-3xl mx-auto space-y-6">
+                <div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
+                    <div>
+                        <span class="text-xs text-slate-400 block">Test jarayoni:</span>
+                        <span class="text-sm font-bold text-teal-400" id="quiz-progress-text">Savol 1 / 5</span>
+                    </div>
+                    <button onclick="exitQuiz()" class="text-xs px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all">
+                        <i class="fa-solid fa-xmark mr-1"></i> Chiqish
+                    </button>
+                </div>
+
+                <div class="glass-card p-6 md:p-8 rounded-3xl space-y-6 border border-slate-800">
+                    <div class="space-y-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-teal-500/10 text-teal-300 border border-teal-500/20" id="question-topic-badge">Mavzu</span>
+                        <h3 class="text-lg md:text-xl font-bold text-white leading-relaxed" id="question-text">
+                            Savol matni...
+                        </h3>
+                    </div>
+
+                    <div class="space-y-3" id="options-container">
+                        <!-- Options generated dynamically -->
+                    </div>
+
+                    <div id="explanation-box" class="hidden p-4 rounded-xl border text-sm leading-relaxed border-teal-500/30 bg-teal-500/10 text-teal-200">
+                        <!-- Explanation text -->
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+                        <button id="prev-q-btn" onclick="prevQuestion()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs disabled:opacity-40">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Avvalgisi
+                        </button>
+                        <button id="next-q-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-all">
+                            Keyingisi <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="quiz-result-screen" class="hidden max-w-2xl mx-auto glass-card p-8 rounded-3xl text-center space-y-6 border border-slate-800">
+                <div class="w-20 h-20 rounded-full bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center text-4xl mx-auto shadow-lg shadow-teal-500/20">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div class="space-y-1">
+                    <h2 class="text-2xl font-extrabold text-white">Test Yakunlandi!</h2>
+                    <p class="text-sm text-slate-400">Natijangiz reyting jadvaliga qo'shildi:</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                    <div>
+                        <div class="text-xs text-slate-400">To'g'ri javoblar</div>
+                        <div class="text-xl font-extrabold text-emerald-400" id="result-correct">0 / 0</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">Foiz</div>
+                        <div class="text-xl font-extrabold text-teal-400" id="result-percent">0%</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">To'plangan Ball</div>
+                        <div class="text-xl font-extrabold text-amber-400" id="result-xp">+0 XP</div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 justify-center pt-2">
+                    <button onclick="switchTab('quizzes')" class="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs">
+                        Boshqa testlar
+                    </button>
+                    <button onclick="switchTab('leaderboard')" class="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs">
+                        Reytingni ko'rish
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-leaderboard" class="hidden space-y-6">
+            <div class="text-center max-w-xl mx-auto space-y-2">
+                <h2 class="text-2xl font-extrabold text-white">O'quvchilar Reyting Jadvali</h2>
+                <p class="text-slate-400 text-sm">Eng yuqori ball (XP) to'plagan o'quvchilar va ularning unvonlari</p>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 max-w-4xl mx-auto">
+                <div class="p-4 bg-slate-950 border-b border-slate-800 text-xs font-bold text-slate-400 grid grid-cols-12 gap-2">
+                    <span class="col-span-1 text-center">#</span>
+                    <span class="col-span-6 sm:col-span-5">O'quvchi Ismi</span>
+                    <span class="col-span-3 sm:col-span-3 text-center">Unvon / Maqom</span>
+                    <span class="col-span-2 sm:col-span-3 text-right">Ball (XP)</span>
+                </div>
+                <div class="divide-y divide-slate-800/60 text-sm" id="leaderboard-table-body">
+                    <!-- Dynamic Leaderboard Rows -->
+                </div>
+            </div>
+        </section>
+
+        <section id="view-announcements" class="hidden space-y-6">
+            <div class="text-center max-w-xl mx-auto space-y-2">
+                <h2 class="text-2xl font-extrabold text-white">E'lonlar va Yangiliklar</h2>
+                <p class="text-slate-400 text-sm">Platformadagi barcha muhim xabarlar va o'quv markazi e'lonlari</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto" id="announcements-list">
+                <!-- Announcements List rendered dynamically -->
+            </div>
+        </section>
+
+        <section id="view-admin-panel" class="hidden space-y-8">
+            <div class="admin-card p-6 md:p-8 rounded-3xl space-y-6 border border-teal-500/40 glow-effect">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> ADMIN PANELI
+                        </span>
+                        <h2 class="text-2xl font-extrabold text-white mt-2">Platformani Boshqarish Markazi</h2>
+                        <p class="text-xs text-slate-400 mt-1">Saytdagi barcha testlar, darslar va e'lonlarni ushbu joydan qo'shing yoki o'zgartiring</p>
+                    </div>
+
+                    <!-- Reset Data Button -->
+                    <button onclick="resetDataToDefault()" class="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Barcha ma'lumotlarni dastlabki holatga qaytarish
+                    </button>
+                </div>
+
+                <!-- Admin Action Tabs -->
+                <div class="flex flex-wrap gap-3 border-b border-slate-800 pb-3">
+                    <button onclick="switchAdminTab('quiz-mgr')" id="admin-tab-btn-quiz-mgr" class="admin-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs bg-teal-500 text-slate-950 shadow-md">
+                        <i class="fa-solid fa-vial mr-1.5"></i> Test Savollari Qo'shish
+                    </button>
+                    <button onclick="switchAdminTab('video-mgr')" id="admin-tab-btn-video-mgr" class="admin-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-video mr-1.5"></i> Video Dars Qo'shish
+                    </button>
+                    <button onclick="switchAdminTab('student-mgr')" id="admin-tab-btn-student-mgr" class="admin-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-users mr-1.5"></i> O'quvchilar & Ballar
+                    </button>
+                    <button onclick="switchAdminTab('news-mgr')" id="admin-tab-btn-news-mgr" class="admin-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-bullhorn mr-1.5"></i> Yangi E'lon Joylash
+                    </button>
+                </div>
+
+                <!-- Admin Tab 1: Quiz Manager -->
+                <div id="admin-tab-quiz-mgr" class="space-y-6">
+                    <form id="add-quiz-form" onsubmit="handleAddQuiz(event)" class="space-y-4 bg-slate-900/90 p-5 rounded-2xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-teal-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> Yangi Test Savoli Yaratish
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Mavzu / Bo'lim nomi:</label>
+                                <input type="text" id="quiz-input-topic" placeholder="Masalan: Organik Kimyo yoki Eritmalar" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">To'g'ri Javob Variantini Tanlang:</label>
+                                <select id="quiz-input-correct" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                                    <option value="0">A Varianti</option>
+                                    <option value="1">B Varianti</option>
+                                    <option value="2">C Varianti</option>
+                                    <option value="3">D Varianti</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Savol Matni:</label>
+                            <textarea id="quiz-input-question" rows="2" placeholder="Test savolini kiriting..." required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input type="text" id="quiz-input-opt0" placeholder="A Variant..." required class="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-teal-500">
+                            <input type="text" id="quiz-input-opt1" placeholder="B Variant..." required class="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-teal-500">
+                            <input type="text" id="quiz-input-opt2" placeholder="C Variant..." required class="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-teal-500">
+                            <input type="text" id="quiz-input-opt3" placeholder="D Variant..." required class="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-teal-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Yechim Tushuntirishi (Izoh):</label>
+                            <input type="text" id="quiz-input-exp" placeholder="Javobning mantiqiy tushuntirishi..." required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                        </div>
+
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Savolni Saqlash
+                        </button>
+                    </form>
+
+                    <!-- Existing Quiz Questions List -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-white">Mavjud Test Savollari Ro'yxati:</h4>
+                        <div id="admin-quiz-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 2: Video Manager -->
+                <div id="admin-tab-video-mgr" class="hidden space-y-6">
+                    <form id="add-video-form" onsubmit="handleAddVideo(event)" class="space-y-4 bg-slate-900/90 p-5 rounded-2xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-teal-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> Yangi YouTube Video Dars Qo'shish
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Video Sarlavhasi:</label>
+                                <input type="text" id="video-input-title" placeholder="Masalan: Molyar konsentratsiya masalalari" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">YouTube Video Havolasi (URL) yoki ID:</label>
+                                <input type="text" id="video-input-url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Mavzu / Bo'lim:</label>
+                                <input type="text" id="video-input-topic" placeholder="Masalan: Stexiometriya" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Davomiyligi (minut):</label>
+                                <input type="text" id="video-input-duration" placeholder="Masalan: 15 daqiqa" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Dars Haqida Qisqacha Ma'lumot:</label>
+                            <textarea id="video-input-desc" rows="2" placeholder="Darsda nimalar o'rgatiladi..." required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-video"></i> Video Darsni Qo'shish
+                        </button>
+                    </form>
+
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-white">Mavjud Video Darslar Ro'yxati:</h4>
+                        <div id="admin-video-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 3: Student & Points Manager -->
+                <div id="admin-tab-student-mgr" class="hidden space-y-6">
+                    <form id="add-student-form" onsubmit="handleAddStudent(event)" class="space-y-4 bg-slate-900/90 p-5 rounded-2xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-teal-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus"></i> Yangi O'quvchi / Ball Kiritish
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">O'quvchi Ism-Familiyasi:</label>
+                                <input type="text" id="student-input-name" placeholder="Masalan: Botir Qodirov" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Boshlang'ich XP Ball:</label>
+                                <input type="number" id="student-input-xp" placeholder="1000" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Unvoni / Maqomi:</label>
+                                <input type="text" id="student-input-title" placeholder="Masalan: Izlanuvchi Kimyogar" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-user-check"></i> O'quvchini Saqlash
+                        </button>
+                    </form>
+
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-white">Reytingdagilar Ro'yxati:</h4>
+                        <div id="admin-student-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tab 4: News & Announcements Manager -->
+                <div id="admin-tab-news-mgr" class="hidden space-y-6">
+                    <form id="add-news-form" onsubmit="handleAddAnnouncement(event)" class="space-y-4 bg-slate-900/90 p-5 rounded-2xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-teal-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn"></i> Yangi E'lon E'lon Qilish
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">E'lon Sarlavhasi:</label>
+                                <input type="text" id="news-input-title" placeholder="Masalan: Yakshanba kungi Milliy Sertifikat Onlayn Testi" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Sana / Vaqt:</label>
+                                <input type="text" id="news-input-date" placeholder="Bugun, 18:00" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">E'lon Matni:</label>
+                            <textarea id="news-input-body" rows="3" placeholder="Barcha o'quvchilar diqqatiga..." required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-teal-500 outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> E'lonni Chop Etish
+                        </button>
+                    </form>
+
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-white">Chop Etilgan E'lonlar Ro'yxati:</h4>
+                        <div id="admin-news-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 ChemEdu Admin Portal. Barcha tahrirlangan ma'lumotlar avtomatik saqlanadi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Default Sample Data (In Uzbek)
+        const defaultQuizzes = [
+            {
+                id: 1,
+                topic: "Organik Kimyo",
+                q: "Metanning gomologik qatorida 5-a'zosi bo'lgan uglevodorodning formulasini va izomerlar sonini aniqlang?",
+                options: ["C5H12, 3 ta izomer", "C5H10, 2 ta izomer", "C4H10, 2 ta izomer", "C6H14, 5 ta izomer"],
+                correct: 0,
+                exp: "Tushuntirish: Pentan (C5H12) 3 ta izomerga ega: n-pentan, izopentan va neopentan."
+            },
+            {
+                id: 2,
+                topic: "Stexiometriya",
+                q: "200 gramm 20% li eritma tayyorlash uchun qancha tuz va suv kerak bo'ladi?",
+                options: ["40 g tuz va 160 g suv", "20 g tuz va 180 g suv", "50 g tuz va 150 g suv", "40 g tuz va 200 g suv"],
+                correct: 0,
+                exp: "Tushuntirish: Tuz massasi = 200 * 0.20 = 40 g. Suv massasi = 200 - 40 = 160 g."
+            },
+            {
+                id: 3,
+                topic: "Reaksiya Tezligi",
+                q: "Harorat 10°C ga oshirilganda reaksiya tezligi 3 marta ortadi (Vant-Goff qoidasi). Harorat 20°C dan 50°C ga oshirilsa tezlik necha marta ortadi?",
+                options: ["9 marta", "27 marta", "81 marta", "12 marta"],
+                correct: 1,
+                exp: "Tushuntirish: gamma = 3. Delta T = 50 - 20 = 30°C. Ortish darajasi = 3^(30/10) = 3^3 = 27 marta."
+            }
+        ];
+
+        const defaultVideos = [
+            {
+                id: 1,
+                title: "Eritmalar va Moliyar Konsentratsiya Masalalari",
+                topic: "Masalalar yechimi",
+                duration: "18 daqiqa",
+                url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                youtubeId: "dQw4w9WgXcQ",
+                desc: "DTM va Milliy Sertifikat imtihonida ko'p tushadigan eritmalar hamda konsentratsiyaga oid masalalarning oson va tezkor yechish usullari."
+            },
+            {
+                id: 2,
+                title: "Atom Tuzilishi va Elektron Konfiguratsiyalar",
+                topic: "Umumiy Kimyo",
+                duration: "22 daqiqa",
+                url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                youtubeId: "dQw4w9WgXcQ",
+                desc: "Kvant sonlari, elektronlarning orbitallar bo'yicha joylashuv qoidalari va ionlar elektron konfiguratsiyasi."
+            }
+        ];
+
+        const defaultStudents = [
+            { id: 1, name: "Malika Sodiqova", xp: 3450, title: "Kimyogar Master" },
+            { id: 2, name: "Jasur Ro'ziyev", xp: 2840, title: "Masala Ustasi" },
+            { id: 3, name: "Sardor Alimov", xp: 2310, title: "Nazariyotchi" },
+            { id: 4, name: "Azizbek Qodirov", xp: 1850, title: "Izlanuvchi" }
+        ];
+
+        const defaultAnnouncements = [
+            {
+                id: 1,
+                title: "Yakshanba kungi Bepul Onlayn DTM Testi",
+                date: "Bugun, 20:00",
+                body: "Hurmatli o'quvchilar, yakshanba kuni soat 20:00 da platformamizda organik kimyo bo mezasicha onlayn bepul marafoni bo'lib o'tadi!"
+            },
+            {
+                id: 2,
+                title: "Yangi Video Darslar Yuklandi",
+                date: "Kechagida",
+                body: "Stexiometriya va eritmalar bo'limiga 2 ta yangi batafsil masalalar yechimi videosi joylandi."
+            }
+        ];
+
+        // Global State variables with LocalStorage Persistence
+        let quizzes = JSON.parse(localStorage.getItem('chemedu_quizzes')) || defaultQuizzes;
+        let videos = JSON.parse(localStorage.getItem('chemedu_videos')) || defaultVideos;
+        let students = JSON.parse(localStorage.getItem('chemedu_students')) || defaultStudents;
+        let announcements = JSON.parse(localStorage.getItem('chemedu_announcements')) || defaultAnnouncements;
+
+        let currentRole = 'student'; // 'student' or 'admin'
+        let currentQuizIndex = 0;
+        let userQuizAnswers = [];
+
+        // Save data helper
+        function saveData() {
+            localStorage.setItem('chemedu_quizzes', JSON.stringify(quizzes));
+            localStorage.setItem('chemedu_videos', JSON.stringify(videos));
+            localStorage.setItem('chemedu_students', JSON.stringify(students));
+            localStorage.setItem('chemedu_announcements', JSON.stringify(announcements));
+            updateStatsAndViews();
+        }
+
+        function resetDataToDefault() {
+            if (confirm("Barcha tahrirlangan ma'lumotlar o'chirilib, dastlabki holatga qaytarilsinmi?")) {
+                localStorage.clear();
+                quizzes = defaultQuizzes;
+                videos = defaultVideos;
+                students = defaultStudents;
+                announcements = defaultAnnouncements;
+                saveData();
+                alert("Platforma ma'lumotlari muvaffaqiyatli tiklandi!");
+            }
+        }
+
+        // Mode Switcher (Admin vs Student)
+        function setMode(mode) {
+            currentRole = mode;
+            const studentBtn = document.getElementById('mode-student-btn');
+            const adminBtn = document.getElementById('mode-admin-btn');
+            const roleSub = document.getElementById('role-subtitle');
+
+            if (mode === 'admin') {
+                adminBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-teal-500 text-slate-950 shadow-md";
+                studentBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white";
+                roleSub.innerText = "ADMIN PANELI";
+                switchTab('admin-panel');
+            } else {
+                studentBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-teal-500 text-slate-950 shadow-md";
+                adminBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white";
+                roleSub.innerText = "O'QUV PORTALI";
+                switchTab('dashboard');
+            }
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            const views = ['dashboard', 'videos', 'quizzes', 'leaderboard', 'announcements', 'admin-panel'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+
+                const navBtn = document.getElementById(`nav-${v}`);
+                if (navBtn) {
+                    navBtn.className = "nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800";
+                }
+            });
+
+            const activeView = document.getElementById(`view-${tabId}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.className = "nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 text-teal-400 bg-teal-500/10 border border-teal-500/20";
+            }
+        }
+
+        function switchAdminTab(subTab) {
+            const tabs = ['quiz-mgr', 'video-mgr', 'student-mgr', 'news-mgr'];
+            tabs.forEach(t => {
+                document.getElementById(`admin-tab-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`admin-tab-btn-${t}`);
+                if (btn) btn.className = "admin-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700";
+            });
+
+            document.getElementById(`admin-tab-${subTab}`).classList.remove('hidden');
+            document.getElementById(`admin-tab-btn-${subTab}`).className = "admin-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs bg-teal-500 text-slate-950 shadow-md";
+        }
+
+        function updateStatsAndViews() {
+            document.getElementById('stat-total-quizzes').innerText = quizzes.length;
+            document.getElementById('stat-total-videos').innerText = videos.length;
+            document.getElementById('stat-total-students').innerText = students.length;
+            document.getElementById('stat-total-announcements').innerText = announcements.length;
+
+            renderDashboardAnnouncements();
+            renderVideosView();
+            renderQuizzesSelection();
+            renderLeaderboardTable();
+            renderAnnouncementsList();
+            renderAdminLists();
+        }
+
+        function renderDashboardAnnouncements() {
+            const container = document.getElementById('dashboard-announcements');
+            container.innerHTML = '';
+
+            announcements.slice(0, 2).forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-5 rounded-2xl border border-slate-800 space-y-2";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-xs text-teal-400 font-semibold">
+                        <span><i class="fa-solid fa-bell mr-1"></i> Muhim E'lon</span>
+                        <span class="text-slate-400">${item.date}</span>
+                    </div>
+                    <h3 class="font-bold text-white text-sm">${item.title}</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">${item.body}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderVideosView() {
+            const listContainer = document.getElementById('videos-list-container');
+            listContainer.innerHTML = '';
+
+            document.getElementById('video-count-badge').innerText = `${videos.length} ta dars`;
+
+            if (videos.length > 0) {
+                // Set first video as default if not selected
+                if (!document.getElementById('active-video-title').innerText || document.getElementById('active-video-title').innerText === 'Video dars sarlavhasi') {
+                    playVideo(videos[0]);
+                }
+
+                videos.forEach((vid, idx) => {
+                    const card = document.createElement('div');
+                    card.className = "p-3 rounded-xl glass-card hover:border-teal-500/40 cursor-pointer transition-all flex items-center space-x-3 border border-slate-800";
+                    card.onclick = () => playVideo(vid);
+                    card.innerHTML = `
+                        <div class="w-10 h-10 rounded-lg bg-teal-500/10 text-teal-400 flex-shrink-0 flex items-center justify-center font-bold text-xs">
+                            ${idx + 1}
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-xs font-bold text-white truncate">${vid.title}</h4>
+                            <span class="text-[10px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${vid.duration}</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }
+        }
+
+        function playVideo(vid) {
+            document.getElementById('active-video-title').innerText = vid.title;
+            document.getElementById('active-video-desc').innerText = vid.desc;
+            document.getElementById('active-video-topic').innerText = vid.topic;
+
+            // Extract YouTube embed ID
+            let embedUrl = `https://www.youtube.com/embed/${vid.youtubeId}`;
+            document.getElementById('main-youtube-iframe').src = embedUrl;
+        }
+
+        function renderQuizzesSelection() {
+            const container = document.getElementById('quizzes-grid-container');
+            container.innerHTML = '';
+
+            const card = document.createElement('div');
+            card.className = "glass-card p-6 rounded-2xl border border-slate-800 hover:border-teal-500/50 transition-all flex flex-col justify-between space-y-4";
+            card.innerHTML = `
+                <div class="space-y-3">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-teal-500/10 text-teal-300 border border-teal-500/20">Aralash Kimyo Testlari</span>
+                    <h3 class="text-xl font-bold text-white">Platformaning Barcha Testlari</h3>
+                    <p class="text-xs text-slate-400">Jami ${quizzes.length} ta DTM standartidagi savollardan tashkil topgan test to'plami.</p>
+                </div>
+                <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+                    <span class="text-xs font-semibold text-emerald-400">+${quizzes.length * 20} XP Ball</span>
+                    <button onclick="startInteractiveQuiz()" class="px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-all">Testni Boshlash</button>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
+        function startInteractiveQuiz() {
+            if (quizzes.length === 0) {
+                alert("Hozircha admin tomonidan test savollari kiritilmagan. Admin panel orqali savol qo'shing!");
+                return;
+            }
+            currentQuizIndex = 0;
+            userQuizAnswers = [];
+            document.getElementById('quiz-selection-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            document.getElementById('quiz-active-screen').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizzes[currentQuizIndex];
+            document.getElementById('quiz-progress-text').innerText = `Savol ${currentQuizIndex + 1} / ${quizzes.length}`;
+            document.getElementById('question-topic-badge').innerText = q.topic;
+            document.getElementById('question-text').innerText = q.q;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            const explanationBox = document.getElementById('explanation-box');
+            explanationBox.classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-slate-200 text-xs sm:text-sm transition-all font-medium flex items-center justify-between";
+                btn.innerText = opt;
+
+                if (userQuizAnswers[currentQuizIndex] !== undefined) {
+                    if (idx === q.correct) {
+                        btn.classList.add('border-emerald-500', 'bg-emerald-500/10', 'text-emerald-300');
+                    } else if (idx === userQuizAnswers[currentQuizIndex]) {
+                        btn.classList.add('border-red-500', 'bg-red-500/10', 'text-red-300');
+                    }
+                } else {
+                    btn.onclick = () => {
+                        userQuizAnswers[currentQuizIndex] = idx;
+                        renderQuizQuestion();
+                    };
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            if (userQuizAnswers[currentQuizIndex] !== undefined) {
+                explanationBox.classList.remove('hidden');
+                explanationBox.innerText = q.exp;
+            }
+
+            document.getElementById('prev-q-btn').disabled = currentQuizIndex === 0;
+        }
+
+        function nextQuestion() {
+            if (currentQuizIndex < quizzes.length - 1) {
+                currentQuizIndex++;
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuizIndex > 0) {
+                currentQuizIndex--;
+                renderQuizQuestion();
+            }
+        }
+
+        function exitQuiz() {
+            document.getElementById('quiz-active-screen').classList.add('hidden');
+            document.getElementById('quiz-selection-screen').classList.remove('hidden');
+        }
+
+        function finishQuiz() {
+            let correct = 0;
+            quizzes.forEach((q, idx) => {
+                if (userQuizAnswers[idx] === q.correct) correct++;
+            });
+
+            const percent = Math.round((correct / quizzes.length) * 100);
+            const earnedXP = correct * 20;
+
+            document.getElementById('result-correct').innerText = `${correct} / ${quizzes.length}`;
+            document.getElementById('result-percent').innerText = `${percent}%`;
+            document.getElementById('result-xp').innerText = `+${earnedXP} XP`;
+
+            // Auto update top student score
+            if (students.length > 0) {
+                students[0].xp += earnedXP;
+                saveData();
+            }
+
+            document.getElementById('quiz-active-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.remove('hidden');
+        }
+
+        // Leaderboard Render
+        function renderLeaderboardTable() {
+            const body = document.getElementById('leaderboard-table-body');
+            body.innerHTML = '';
+
+            // Sort students by XP descending
+            const sorted = [...students].sort((a, b) => b.xp - a.xp);
+
+            sorted.forEach((s, idx) => {
+                const row = document.createElement('div');
+                row.className = "p-4 grid grid-cols-12 gap-2 items-center hover:bg-slate-800/40 transition-colors";
+                row.innerHTML = `
+                    <span class="col-span-1 text-center font-bold text-slate-400">${idx + 1}</span>
+                    <div class="col-span-6 sm:col-span-5 font-semibold text-white truncate">${s.name}</div>
+                    <div class="col-span-3 sm:col-span-3 text-center">
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-teal-300 border border-slate-700">${s.title}</span>
+                    </div>
+                    <span class="col-span-2 sm:col-span-3 text-right font-bold text-amber-400">${s.xp} XP</span>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        function renderAnnouncementsList() {
+            const container = document.getElementById('announcements-list');
+            container.innerHTML = '';
+
+            announcements.forEach(a => {
+                const item = document.createElement('div');
+                item.className = "glass-card p-6 rounded-2xl border border-slate-800 space-y-3";
+                item.innerHTML = `
+                    <div class="flex items-center justify-between text-xs text-teal-400 font-semibold">
+                        <span><i class="fa-solid fa-bullhorn mr-1"></i> Rasmiy E'lon</span>
+                        <span class="text-slate-400">${a.date}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">${a.title}</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed">${a.body}</p>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function handleAddQuiz(e) {
+            e.preventDefault();
+            const topic = document.getElementById('quiz-input-topic').value;
+            const q = document.getElementById('quiz-input-question').value;
+            const correct = parseInt(document.getElementById('quiz-input-correct').value);
+            const exp = document.getElementById('quiz-input-exp').value;
+            const options = [
+                document.getElementById('quiz-input-opt0').value,
+                document.getElementById('quiz-input-opt1').value,
+                document.getElementById('quiz-input-opt2').value,
+                document.getElementById('quiz-input-opt3').value
+            ];
+
+            quizzes.push({ id: Date.now(), topic, q, options, correct, exp });
+            saveData();
+            document.getElementById('add-quiz-form').reset();
+            alert("Yangi test savoli muvaffaqiyatli saqlandi!");
+        }
+
+        function handleAddVideo(e) {
+            e.preventDefault();
+            const title = document.getElementById('video-input-title').value;
+            const url = document.getElementById('video-input-url').value;
+            const topic = document.getElementById('video-input-topic').value;
+            const duration = document.getElementById('video-input-duration').value;
+            const desc = document.getElementById('video-input-desc').value;
+
+            // Simple YouTube ID extraction
+            let youtubeId = "dQw4w9WgXcQ";
+            if (url.includes('v=')) {
+                youtubeId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                youtubeId = url.split('youtu.be/')[1];
+            }
+
+            videos.push({ id: Date.now(), title, url, youtubeId, topic, duration, desc });
+            saveData();
+            document.getElementById('add-video-form').reset();
+            alert("Yangi video dars qo'shildi!");
+        }
+
+        function handleAddStudent(e) {
+            e.preventDefault();
+            const name = document.getElementById('student-input-name').value;
+            const xp = parseInt(document.getElementById('student-input-xp').value);
+            const title = document.getElementById('student-input-title').value;
+
+            students.push({ id: Date.now(), name, xp, title });
+            saveData();
+            document.getElementById('add-student-form').reset();
+            alert("Yangi o'quvchi va uning bali saqlandi!");
+        }
+
+        function handleAddAnnouncement(e) {
+            e.preventDefault();
+            const title = document.getElementById('news-input-title').value;
+            const date = document.getElementById('news-input-date').value;
+            const body = document.getElementById('news-input-body').value;
+
+            announcements.unshift({ id: Date.now(), title, date, body });
+            saveData();
+            document.getElementById('add-news-form').reset();
+            alert("Yangi e'lon chop etildi!");
+        }
+
+        // Render Admin Tables with Delete Functionality
+        function renderAdminLists() {
+            // Quizzes Admin List
+            const quizList = document.getElementById('admin-quiz-list');
+            quizList.innerHTML = '';
+            quizzes.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs";
+                item.innerHTML = `
+                    <div class="truncate mr-2">
+                        <span class="font-bold text-teal-400">[${q.topic}]</span> <span class="text-white">${q.q}</span>
+                    </div>
+                    <button onclick="deleteQuiz(${idx})" class="text-red-400 hover:text-red-300 font-bold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                `;
+                quizList.appendChild(item);
+            });
+
+            // Videos Admin List
+            const videoList = document.getElementById('admin-video-list');
+            videoList.innerHTML = '';
+            videos.forEach((v, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs";
+                item.innerHTML = `
+                    <div class="truncate mr-2">
+                        <span class="font-bold text-teal-400">[${v.topic}]</span> <span class="text-white">${v.title}</span>
+                    </div>
+                    <button onclick="deleteVideo(${idx})" class="text-red-400 hover:text-red-300 font-bold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                `;
+                videoList.appendChild(item);
+            });
+
+            // Students Admin List
+            const studentList = document.getElementById('admin-student-list');
+            studentList.innerHTML = '';
+            students.forEach((s, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs";
+                item.innerHTML = `
+                    <div>
+                        <span class="font-bold text-white">${s.name}</span> - <span class="text-amber-400">${s.xp} XP</span>
+                    </div>
+                    <button onclick="deleteStudent(${idx})" class="text-red-400 hover:text-red-300 font-bold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                `;
+                studentList.appendChild(item);
+            });
+
+            // Announcements Admin List
+            const newsList = document.getElementById('admin-news-list');
+            newsList.innerHTML = '';
+            announcements.forEach((a, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs";
+                item.innerHTML = `
+                    <div class="truncate mr-2">
+                        <span class="font-bold text-teal-400">[${a.date}]</span> <span class="text-white">${a.title}</span>
+                    </div>
+                    <button onclick="deleteAnnouncement(${idx})" class="text-red-400 hover:text-red-300 font-bold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                `;
+                newsList.appendChild(item);
+            });
+        }
+
+        function deleteQuiz(idx) {
+            quizzes.splice(idx, 1);
+            saveData();
+        }
+
+        function deleteVideo(idx) {
+            videos.splice(idx, 1);
+            saveData();
+        }
+
+        function deleteStudent(idx) {
+            students.splice(idx, 1);
+            saveData();
+        }
+
+        function deleteAnnouncement(idx) {
+            announcements.splice(idx, 1);
+            saveData();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            updateStatsAndViews();
+        };
+    </script>
+</body>
+</html>
